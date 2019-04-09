@@ -6,12 +6,6 @@ class RequestService {
       .catch(err => newsSource.articlesProvider(err));
     newsSource.articlesProvider(newsData);
   }
-  async apiSourceFetcher(url) {
-    const newsSourceSelect = await await fetch(url)
-      .then(source => source.json())
-      .catch(error => newsSource.newsSourceChannel(error));
-    newsSource.newsSourceChannel(newsSourceSelect.sources);
-  }
 }
 class newsSourceProvider extends RequestService {
   articlesProvider(data) {
@@ -32,14 +26,6 @@ class newsSourceProvider extends RequestService {
       );
     }
     elementId.innerHTML = returnHtml;
-  }
-  newsSourceChannel(data) {
-    const sourceSelectBox = document.getElementById("newsSource");
-    data.map(({ id }, index) => {
-      const selectOptions = document.createElement("option");
-      selectOptions[index] += selectOptions.text = id;
-      sourceSelectBox.appendChild(selectOptions);
-    });
   }
 }
 const requestCall = new RequestService();
