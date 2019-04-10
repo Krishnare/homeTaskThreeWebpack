@@ -1,16 +1,16 @@
-const path = require('path');
-const htmlWebPackPlugin = require("html-webpack-plugin");
+// const path = require('path');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const miniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-    entry: './src/index.js',
-    output: {
-        path: path.resolve(__dirname, "dist"),
-        filename:"main.js",
-        publicPath:"/dist/"
-    },
+    // entry: './src/styles/main.scss',
+    // output: {
+    //     path: path.resolve(__dirname, "dist"),
+    //     filename:"main.css",
+    //     publicPath:"/dist/"
+    // },
     plugins: [
-        new htmlWebPackPlugin({
+        new HtmlWebpackPlugin({
             template: "./src/index.html",
             filename: "./index.html"
         }),
@@ -33,7 +33,7 @@ module.exports = {
                     use:[
                         {
                             loader: "html-loader",
-                            options: {minimize: false}
+                            options: {minimize: true}
                         }
                     ]
             },

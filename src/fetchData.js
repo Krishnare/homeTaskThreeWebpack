@@ -28,6 +28,7 @@ class newsSourceProvider extends RequestService {
     elementId.innerHTML = returnHtml;
   }
 }
+
 const requestCall = new RequestService();
 const newsSource = new newsSourceProvider();
 export default requestCall;
