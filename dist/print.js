@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[1],{9:function(e,o,n){"use strict";n.r(o),console.log("The print.js module has loaded! See the network tab in dev tools...");o.default=(()=>{console.log({firstName:"John",lastName:"Doe",age:50,eyeColor:"blue"})})}}]);

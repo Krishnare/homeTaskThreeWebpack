@@ -11,9 +11,6 @@ class RequestService {
       element.innerHTML = _.join(['Hello', 'webpack'], ' ');
 
     }).catch(error => 'An error occurred while loading the component');
-    // console.log(
-    //   _.join(newsData)
-    // );
   }
 }
 class newsSourceProvider extends RequestService {
