@@ -1,8 +1,9 @@
 import _ from 'lodash';
 "use strict"
+let newsData ="";
 class RequestService {
-  async getRequest(url) {
-    const newsData = await await fetch(url)
+  async getRequest(url){
+    newsData = await fetch(url)
       .then(data => data.json())
       .catch(err => newsSource.articlesProvider(err));
     newsSource.articlesProvider(newsData);
@@ -27,11 +28,14 @@ class newsSourceProvider extends RequestService {
           index
         ) => {
           uniqueVal = index === 0 ? `<h1>${author}</h1>` : "";
-          returnHtml += `${uniqueVal}<div class="newsTitle">${title}</div><div class="newsDescription">${description}</div><div class="publishDate">${publishedAt}</div><div class="imageContainer"><a href="${url}" target="_blank"><img src=${urlToImage} /></a></div>`;
+          returnHtml += `${uniqueVal}<div class="newsTitle">${title}</div><div class="newsDescription">${description}</div><div class="publishDate">${publishedAt}</div><div class="imageContainer"><a href="${url}" target="_blank"><img class ="imageLazy" data-lazy=${urlToImage} /></a></div>`;
         }
       );
     }
     elementId.innerHTML = returnHtml;
+    import( /* webpackChunkName: "print" */ './print.js').then((mod) =>{
+      console.log(mod);
+    })
   }
 }
 

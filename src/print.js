@@ -1,14 +1,18 @@
-console.log('The print.js module has loaded! See the network tab in dev tools...');
+const targets = document.querySelectorAll('img');
+const lazyLoad = target => {
+  const io = new IntersectionObserver((entries, observer) => {
+    console.log(entries)
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        const src = img.getAttribute('data-lazy');
 
-
-const fetchedData =() =>{
-    const person = {
-        firstName: "John",
-        lastName: "Doe",
-        age: 50,
-        eyeColor: "blue"
-    };
-    console.log(person);
+        img.setAttribute('src', src);
+        img.classList.add('fade');
+        observer.disconnect();
+      }
+    });
+  }); 
+  io.observe(target);
 };
-
-export default fetchedData;
+targets.forEach(lazyLoad);

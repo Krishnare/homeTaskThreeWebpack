@@ -1,15 +1,18 @@
-// const path = require('path');
+const path = require('path');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const miniCssExtractPlugin = require("mini-css-extract-plugin");
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 // const syntexDynamicImport = require('syntax-dynamic-import');
 module.exports = {
-    // entry: './src/styles/main.scss',
-    // output: {
-    //     path: path.resolve(__dirname, "dist"),
-    //     filename:"main.css",
-    //     publicPath:"/dist/"
-    // },
+    mode: 'development',
+    entry: {
+      index: './src/index.js',
+      another: './src/print.js'
+    },
+    output: {
+      filename: '[name].bundle.js',
+      path: path.resolve(__dirname, 'dist')
+    },
     plugins: [
         new HtmlWebpackPlugin({
             template: "./src/index.html",
