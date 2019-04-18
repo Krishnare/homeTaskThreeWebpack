@@ -1,6 +1,50 @@
 /******/ (function(modules) { // webpackBootstrap
+/******/ 	// install a JSONP callback for chunk loading
+/******/ 	function webpackJsonpCallback(data) {
+/******/ 		var chunkIds = data[0];
+/******/ 		var moreModules = data[1];
+/******/
+/******/
+/******/ 		// add "moreModules" to the modules object,
+/******/ 		// then flag all "chunkIds" as loaded and fire callback
+/******/ 		var moduleId, chunkId, i = 0, resolves = [];
+/******/ 		for(;i < chunkIds.length; i++) {
+/******/ 			chunkId = chunkIds[i];
+/******/ 			if(installedChunks[chunkId]) {
+/******/ 				resolves.push(installedChunks[chunkId][0]);
+/******/ 			}
+/******/ 			installedChunks[chunkId] = 0;
+/******/ 		}
+/******/ 		for(moduleId in moreModules) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(moreModules, moduleId)) {
+/******/ 				modules[moduleId] = moreModules[moduleId];
+/******/ 			}
+/******/ 		}
+/******/ 		if(parentJsonpFunction) parentJsonpFunction(data);
+/******/
+/******/ 		while(resolves.length) {
+/******/ 			resolves.shift()();
+/******/ 		}
+/******/
+/******/ 	};
+/******/
+/******/
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
+/******/
+/******/ 	// object to store loaded and loading chunks
+/******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 	// Promise = chunk loading, 0 = chunk loaded
+/******/ 	var installedChunks = {
+/******/ 		"index": 0
+/******/ 	};
+/******/
+/******/
+/******/
+/******/ 	// script path function
+/******/ 	function jsonpScriptSrc(chunkId) {
+/******/ 		return __webpack_require__.p + "" + ({"print":"print"}[chunkId]||chunkId) + ".bundle.js"
+/******/ 	}
 /******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
@@ -26,6 +70,64 @@
 /******/ 		return module.exports;
 /******/ 	}
 /******/
+/******/ 	// This file contains only the entry chunk.
+/******/ 	// The chunk loading function for additional chunks
+/******/ 	__webpack_require__.e = function requireEnsure(chunkId) {
+/******/ 		var promises = [];
+/******/
+/******/
+/******/ 		// JSONP chunk loading for javascript
+/******/
+/******/ 		var installedChunkData = installedChunks[chunkId];
+/******/ 		if(installedChunkData !== 0) { // 0 means "already installed".
+/******/
+/******/ 			// a Promise means "currently loading".
+/******/ 			if(installedChunkData) {
+/******/ 				promises.push(installedChunkData[2]);
+/******/ 			} else {
+/******/ 				// setup Promise in chunk cache
+/******/ 				var promise = new Promise(function(resolve, reject) {
+/******/ 					installedChunkData = installedChunks[chunkId] = [resolve, reject];
+/******/ 				});
+/******/ 				promises.push(installedChunkData[2] = promise);
+/******/
+/******/ 				// start chunk loading
+/******/ 				var script = document.createElement('script');
+/******/ 				var onScriptComplete;
+/******/
+/******/ 				script.charset = 'utf-8';
+/******/ 				script.timeout = 120;
+/******/ 				if (__webpack_require__.nc) {
+/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
+/******/ 				}
+/******/ 				script.src = jsonpScriptSrc(chunkId);
+/******/
+/******/ 				onScriptComplete = function (event) {
+/******/ 					// avoid mem leaks in IE.
+/******/ 					script.onerror = script.onload = null;
+/******/ 					clearTimeout(timeout);
+/******/ 					var chunk = installedChunks[chunkId];
+/******/ 					if(chunk !== 0) {
+/******/ 						if(chunk) {
+/******/ 							var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 							var realSrc = event && event.target && event.target.src;
+/******/ 							var error = new Error('Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')');
+/******/ 							error.type = errorType;
+/******/ 							error.request = realSrc;
+/******/ 							chunk[1](error);
+/******/ 						}
+/******/ 						installedChunks[chunkId] = undefined;
+/******/ 					}
+/******/ 				};
+/******/ 				var timeout = setTimeout(function(){
+/******/ 					onScriptComplete({ type: 'timeout', target: script });
+/******/ 				}, 120000);
+/******/ 				script.onerror = script.onload = onScriptComplete;
+/******/ 				document.head.appendChild(script);
+/******/ 			}
+/******/ 		}
+/******/ 		return Promise.all(promises);
+/******/ 	};
 /******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
@@ -78,6 +180,16 @@
 /******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// on error function for async loading
+/******/ 	__webpack_require__.oe = function(err) { console.error(err); throw err; };
+/******/
+/******/ 	var jsonpArray = window["webpackJsonp"] = window["webpackJsonp"] || [];
+/******/ 	var oldJsonpFunction = jsonpArray.push.bind(jsonpArray);
+/******/ 	jsonpArray.push = webpackJsonpCallback;
+/******/ 	jsonpArray = jsonpArray.slice();
+/******/ 	for(var i = 0; i < jsonpArray.length; i++) webpackJsonpCallback(jsonpArray[i]);
+/******/ 	var parentJsonpFunction = oldJsonpFunction;
 /******/
 /******/
 /******/ 	// Load entry module and return exports
@@ -164,6 +276,17 @@ eval("module.exports = function(module) {\n\tif (!module.webpackPolyfill) {\n\t\
 
 /***/ }),
 
+/***/ "./src/config.js":
+/*!***********************!*\
+  !*** ./src/config.js ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("let url = `https://newsapi.org/v1/`;\nlet newsCategory = \"bbc-news\";\nconst apiKey = \"articles?source=720c0314e8b2423eb7e1ffca5a1eeeb1\";\nlet httpurl = `https://newsapi.org/v1/${newsCategory}&apiKey=${apiKey}`; // module.exports = {\n//     urlConstructor: {\n//       url: `https://newsapi.org/v1/`,\n//       newsCategory: \"bbc-news\",\n//       apiKey:  \"articles?source=720c0314e8b2423eb7e1ffca5a1eeeb1\",\n//       httpurl: urlConstructor.url+ newsCategory + apiKey\n//     }\n//   }\n\n//# sourceURL=webpack:///./src/config.js?");
+
+/***/ }),
+
 /***/ "./src/fetchData.js":
 /*!**************************!*\
   !*** ./src/fetchData.js ***!
@@ -172,7 +295,7 @@ eval("module.exports = function(module) {\n\tif (!module.webpackPolyfill) {\n\t\
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ \"./node_modules/lodash/lodash.js\");\n/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _src_fetchHtml_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../src/fetchHtml.js */ \"./src/fetchHtml.js\");\n\n\n\"use strict\";\n\nlet newsData = \"\";\n\nclass RequestService {\n  async getRequest(url) {\n    newsData = await fetch(url).then(data => data.json()).catch(err => _src_fetchHtml_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"].articlesProvider(err));\n    _src_fetchHtml_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"].articlesProvider(newsData);\n  }\n\n}\n\nconst requestCall = new RequestService();\n/* harmony default export */ __webpack_exports__[\"default\"] = (requestCall);\n\n//# sourceURL=webpack:///./src/fetchData.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ \"./node_modules/lodash/lodash.js\");\n/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _src_fetchHtml_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../src/fetchHtml.js */ \"./src/fetchHtml.js\");\n/* harmony import */ var _config_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./config.js */ \"./src/config.js\");\n/* harmony import */ var _config_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_config_js__WEBPACK_IMPORTED_MODULE_2__);\n\n\n\n\nclass ApiFetcher {\n  async fetch(url) {\n    let response = await fetch(url);\n    let data = await response;\n    return data;\n  }\n\n}\n\nclass NewssourceComponent extends ApiFetcher {\n  constructor(data) {\n    super();\n    this.httpurl = \"https://newsapi.org/v2/sources?apiKey=720c0314e8b2423eb7e1ffca5a1eeeb1\";\n  }\n\n  async fetch(httpurl) {\n    return await super.fetch(this.httpurl);\n  }\n\n  render(data) {\n    const sourceSelectBox = document.getElementById(\"newsSource\");\n    data.sources.map(({\n      id\n    }, index) => {\n      const selectOptions = document.createElement(\"option\");\n      selectOptions[index] += selectOptions.text = id;\n      sourceSelectBox.appendChild(selectOptions);\n    });\n  }\n\n}\n\nclass NewssourceSelectComponent extends ApiFetcher {\n  constructor(data) {\n    super();\n  }\n\n  async fetch(httpurl) {\n    return await super.fetch(this.httpurl);\n  }\n\n  render(data) {\n    const elementId = document.getElementById(\"newsDetails\");\n    let returnHtml = \"\",\n        uniqueVal = [];\n\n    if (data.status === \"error\") {\n      returnHtml = `<div id=\"error\">${data.message}</div>`;\n    } else {\n      data.articles.map(({\n        author,\n        title,\n        description,\n        publishedAt,\n        url,\n        urlToImage\n      }, index) => {\n        uniqueVal = index === 0 ? `<h1>${author}</h1>` : \"\";\n        returnHtml += `${uniqueVal}<div class=\"newsTitle\">${title}</div><div class=\"newsDescription\">${description}</div><div class=\"publishDate\">${publishedAt}</div><div class=\"imageContainer\"><a href=\"${url}\" target=\"_blank\"><img class =\"imageLazy\" data-lazy=${urlToImage} /></a></div>`;\n      });\n    }\n\n    elementId.innerHTML = returnHtml; // import( /* webpackChunkName: \"print\" */ './print.js').then((mod) =>{\n    //   console.log(mod);\n    // })\n  }\n\n}\n\nclass NewsAppConent {\n  constructor() {\n    this.newssourceComponentClass = new NewssourceComponent(this);\n    this.newssourceSelectComponent = new NewssourceSelectComponent(this);\n  }\n\n  intialize() {\n    const sourceSelectBox = document.getElementById(\"newsSource\");\n    sourceSelectBox.addEventListener(\"click\", event => {\n      const currentSelectVal = event.target.value;\n      const url = `https://newsapi.org/v1/articles?source=${currentSelectVal}&apiKey=720c0314e8b2423eb7e1ffca5a1eeeb1`;\n      this.newssourceSelectComponent.fetch(url).then(value => {\n        this.newssourceSelectComponent.render(value);\n      });\n    });\n    this.newsSource = this.newssourceComponentClass.fetch().then(value => {\n      this.newssourceComponentClass.render(value);\n    });\n  }\n\n} // const sourceSelectBox = document.getElementById(\"newsSource\");\n// sourceSelectBox.addEventListener(\"click\", (event) => {\n//   let currentSelectVal = event.target.value;\n//   newssourceSelectComponent.handleSourceChange(currentSelectVal);\n// });\n\n\nconst requestCall = new ApiFetcher();\nconst newsSourceClass = new NewssourceComponent();\nconst intializeFunctions = new NewsAppConent();\nconst newssourceSelectComponent = new NewssourceSelectComponent();\nintializeFunctions.intialize();\n/* harmony default export */ __webpack_exports__[\"default\"] = (requestCall);\n\n//# sourceURL=webpack:///./src/fetchData.js?");
 
 /***/ }),
 
@@ -184,7 +307,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var loda
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _src_fetchData_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../src/fetchData.js */ \"./src/fetchData.js\");\n/* harmony import */ var _src_print_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../src/print.js */ \"./src/print.js\");\n/* harmony import */ var _src_print_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_src_print_js__WEBPACK_IMPORTED_MODULE_1__);\n\n\n\nclass newsSourceProvider {\n  articlesProvider(data) {\n    const elementId = document.getElementById(\"newsDetails\");\n    let returnHtml = \"\",\n        uniqueVal = [];\n\n    if (data.status === \"error\") {\n      returnHtml = `<div id=\"error\">${data.message}</div>`;\n    } else {\n      data.articles.map(({\n        author,\n        title,\n        description,\n        publishedAt,\n        url,\n        urlToImage\n      }, index) => {\n        uniqueVal = index === 0 ? `<h1>${author}</h1>` : \"\";\n        returnHtml += `${uniqueVal}<div class=\"newsTitle\">${title}</div><div class=\"newsDescription\">${description}</div><div class=\"publishDate\">${publishedAt}</div><div class=\"imageContainer\"><a href=\"${url}\" target=\"_blank\"><img class =\"imageLazy\" data-lazy=${urlToImage} /></a></div>`;\n      });\n    }\n\n    elementId.innerHTML = returnHtml;\n    Promise.resolve(/*! import() */).then(__webpack_require__.t.bind(null, /*! ./print.js */ \"./src/print.js\", 7)).then(mod => {\n      console.log(mod);\n    });\n  }\n\n}\n\nconst newsSource = new newsSourceProvider();\n/* harmony default export */ __webpack_exports__[\"default\"] = (newsSource);\n\n//# sourceURL=webpack:///./src/fetchHtml.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _src_fetchData_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../src/fetchData.js */ \"./src/fetchData.js\");\n\n\nclass newsSourceProvider {\n  articlesProvider(data) {\n    const elementId = document.getElementById(\"newsDetails\");\n    let returnHtml = \"\",\n        uniqueVal = [];\n\n    if (data.status === \"error\") {\n      returnHtml = `<div id=\"error\">${data.message}</div>`;\n    } else {\n      data.articles.map(({\n        author,\n        title,\n        description,\n        publishedAt,\n        url,\n        urlToImage\n      }, index) => {\n        uniqueVal = index === 0 ? `<h1>${author}</h1>` : \"\";\n        returnHtml += `${uniqueVal}<div class=\"newsTitle\">${title}</div><div class=\"newsDescription\">${description}</div><div class=\"publishDate\">${publishedAt}</div><div class=\"imageContainer\"><a href=\"${url}\" target=\"_blank\"><img class =\"imageLazy\" data-lazy=${urlToImage} /></a></div>`;\n      });\n    }\n\n    elementId.innerHTML = returnHtml;\n    __webpack_require__.e(/*! import() | print */ \"print\").then(__webpack_require__.t.bind(null, /*! ./print.js */ \"./src/print.js\", 7)).then(mod => {\n      console.log(mod);\n    });\n  }\n\n}\n\nconst newsSource = new newsSourceProvider();\n/* harmony default export */ __webpack_exports__[\"default\"] = (newsSource);\n\n//# sourceURL=webpack:///./src/fetchHtml.js?");
 
 /***/ }),
 
@@ -196,18 +319,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _src
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _fetchData_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fetchData.js */ \"./src/fetchData.js\");\n/* harmony import */ var _styles_main_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./styles/main.scss */ \"./src/styles/main.scss\");\n/* harmony import */ var _styles_main_scss__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_styles_main_scss__WEBPACK_IMPORTED_MODULE_1__);\n\n // import * as mod from 'lodash';\n// import print from './print.js';\n\n\"use strict\";\n\nconst apiKey = \"720c0314e8b2423eb7e1ffca5a1eeeb1\";\nlet newsCategory = \"bbc-news\";\nlet url = `https://newsapi.org/v1/articles?source=${newsCategory}&apiKey=${apiKey}`;\nconst sourceSelectBox = document.getElementById(\"newsSourceBtn\");\nsourceSelectBox.addEventListener(\"click\", () => {\n  url = `https://newsapi.org/v1/articles?source=${newsCategory}&apiKey=${apiKey}`;\n  _fetchData_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"].getRequest(url);\n});\n\n//# sourceURL=webpack:///./src/index.js?");
-
-/***/ }),
-
-/***/ "./src/print.js":
-/*!**********************!*\
-  !*** ./src/print.js ***!
-  \**********************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-eval("const targets = document.querySelectorAll('img');\n\nconst lazyLoad = target => {\n  const io = new IntersectionObserver((entries, observer) => {\n    console.log(entries);\n    entries.forEach(entry => {\n      if (entry.isIntersecting) {\n        const img = entry.target;\n        const src = img.getAttribute('data-lazy');\n        img.setAttribute('src', src);\n        img.classList.add('fade');\n        observer.disconnect();\n      }\n    });\n  });\n  io.observe(target);\n};\n\ntargets.forEach(lazyLoad);\n\n//# sourceURL=webpack:///./src/print.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _fetchData_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fetchData.js */ \"./src/fetchData.js\");\n/* harmony import */ var _styles_main_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./styles/main.scss */ \"./src/styles/main.scss\");\n/* harmony import */ var _styles_main_scss__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_styles_main_scss__WEBPACK_IMPORTED_MODULE_1__);\n\n\nlet url = `https://newsapi.org/v1/`;\nlet newsCategory = \"articles?source=bbc-news\";\nconst apiKey = \"&apiKey=720c0314e8b2423eb7e1ffca5a1eeeb1\";\nlet httpurl = `${url} ${newsCategory}${apiKey}`; // requestCall.NewsArticles(httpurl);\n\nconst sourceSelectBox = document.getElementById(\"newsSource\");\nconst sourcebtn = document.getElementById(\"newsSourceBtn\");\nsourceSelectBox.addEventListener(\"click\", () => {// requestCall.NewsArticles(httpurl);\n});\nsourceSelectBox.addEventListener(\"change\", event => {\n  newsCategory = event.target.value;\n  httpurl = url + newsCategory + apiKey; // requestCall.getRequest(url);\n});\n\n//# sourceURL=webpack:///./src/index.js?");
 
 /***/ }),
 
